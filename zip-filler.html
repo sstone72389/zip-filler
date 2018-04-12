@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Zip Autofill</title>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+</head>
+
+<body>
+  <img src="https://hannahjennings.com/adventcalendar17/images/steprightup.png" alt="">
+  <h1 style="font-family:verdana;">I'll guess your city and state, FIRST TRY!</h1>
+
+  <form>
+    <label for="zip">Zip:</label>
+    <input id="zip" name="zip" />
+    <label for="city">City:</label>
+    <input id="city" name="city" />
+    <label for="state">State:</label>
+    <input id="state" name="state" />
+  </form>
+
+
+  <script type="text/javascript">
+  //when the user clicks off of the zip field:
+$('#zip').blur(function(){
+var zip = $(this).val();
+var city = '';
+var state = '';
+
+//make a request to the google geocode api
+$.getJSON('http://maps.googleapis.com/maps/api/geocode/json?address='+zip).success(function(response){
+  //find the city and state
+  var address_components = response.results[0].address_components;
+  console.log(response.results[0].address_components)
+  $.each(address_components, function(index, component){
+    var types = component.types;
+    $.each(types, function(index, type){
+      if(type == 'locality') {
+        city = component.long_name;
+      }
+      if(type == 'administrative_area_level_1') {
+        state = component.short_name;
+      }
+    });
+  });
+
+  //pre-fill the city and state
+  $('#city').val(city);
+  $('#state').val(state);
+});
+});
+
+  </script>
+
+
+</body>
+
+</html>
